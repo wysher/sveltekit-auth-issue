@@ -1,57 +1,22 @@
-<script context="module">
-	export async function load(event) {
-		const isAuthenticated = event.session.userid;
-
-        console.log({ isAuthenticated });
-
-		const hasLoginPath = event.url.pathname.startsWith('/auth/login');
-
-		if (!isAuthenticated && !hasLoginPath) {
-			return {
-				status: 302,
-				redirect: '/auth/login',
-				props: {
-					event
-				}
-			};
-		}
-
-		return {
-			props: {
-				event
-			}
-		};
-	}
-</script>
-
 <script>
-	export let event;
-	import { enhance } from '$lib/form';
-	import { browser } from '$app/env';
-	import { session } from '$app/stores';
-	import { goto } from '$app/navigation';
+    import { page } from '$app/stores';
+
+    const PAGES = ['client', 'server'];
 </script>
 
-{#if !!$session?.userid}
-	<form
-		action="/auth/logout"
-		method="post"
-		use:enhance={{
-			async result({ response }) {
-				if (response.ok) {
-					const body = await response.json();
-
-					if (browser) {
-						session.set(body);
-                        isLogoutVisible = false;
-						goto('/auth/login');
-					}
-				}
-			}
-		}}
-	>
-		<button>logout</button>
-	</form>
-{/if}
+<nav>
+    <ul>
+        {#each PAGES as name}
+        <li>
+            <a href="/{name}">
+                {name}
+                {#if $page.url.pathname.includes(name)}
+                <span>{` <==`} </span>
+                {/if}
+            </a>
+        </li>
+        {/each}
+    </ul>
+</nav>
 
 <slot />

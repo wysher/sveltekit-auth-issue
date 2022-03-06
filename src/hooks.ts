@@ -6,13 +6,10 @@ export const getSession: GetSession = (event) => {
     const { userid } = cookies;
     event.locals.userid = userid;
 
-    console.log('get session', { userid });
-
     return userid ? { userid } : {};
 }
 
 export const handle: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
-
 	return response;
 };
